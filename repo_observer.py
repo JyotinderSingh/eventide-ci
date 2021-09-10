@@ -1,3 +1,10 @@
+"""
+Repo Observer Service to observe the repository.
+
+Checks for new commits to the master repo, and will notify the dispatcher of
+the latest commit ID, so the dispatcher can dispatch the tests against this
+commit ID
+"""
 import time
 import argparse
 import os

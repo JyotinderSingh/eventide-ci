@@ -1,3 +1,14 @@
+"""
+Test Dispatcher Service.
+
+Dispatches tests against any registered test runners when the Repo Observer Service
+sends it a 'dispatch' message with the commit ID to be tested. Stores the results 
+when the test runners have completed running the tests and send back the results
+in a 'results' message.
+
+The service can register as many test runners as available. To register a test
+runner, start the dispatcher service - then start the test runner.
+"""
 import re
 import argparse
 import time
@@ -181,3 +192,7 @@ def serve():
         server.dead = True
         runner_heartbeat.join()
         redistributor.join()
+
+
+if __name__ == "__main__":
+    serve()
