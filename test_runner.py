@@ -63,17 +63,18 @@ class TestHandler(socketserver.BaseRequestHandler):
 
     def run_tests(self, commit_id, repo_folder):
         # update repo
-        output = subprocess.check_output(
-            ["./test_runner_script.sh", repo_folder, commit_id]).decode('utf8')
+        output = subprocess.check_output(["./test_runner_script.sh",
+                                          repo_folder, commit_id])
         print(output)
         # run the tests
         test_folder = os.path.join(repo_folder, "tests")
         suite = unittest.TestLoader().discover(test_folder)
         result_file = open("results", "w")
-        unittest.TextTestRunner(stream=result_file, verbosity=2).run(suite)
+        unittest.TextTestRunner(result_file).run(suite)
         result_file.close()
         result_file = open("results", "r")
         # give the dispatcher the results
+        output = result_file.read()
         helpers.communicate(
             self.server.dispatcher_server["host"],
             self.server.dispatcher_server["port"],

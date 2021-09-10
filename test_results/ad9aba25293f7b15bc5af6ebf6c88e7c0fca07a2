@@ -1,6 +1,0 @@
-Removing tests/__pycache__/
-Updating efc4b7f..ad9aba2
-Fast-forward
- tests/test_fail.py | 1 +
- 1 file changed, 1 insertion(+)
-HEAD is now at ad9aba2 test change
