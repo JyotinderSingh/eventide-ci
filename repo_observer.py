@@ -40,13 +40,12 @@ def poll():
         # When update_repo.sh finishes running, we check the existence of the
         # .commit_id file. If it exists, then we know we have a new commit, and
         # we need to notify the dispatcher so it can kick off the tests.
-        response = None
         if os.path.isfile(".commit_id"):
             try:
                 # We check the dispatcher server's status by sending a status request
                 # to make sure there are no problems with it, and to make sure it
                 # is ready for new instructions.
-                reponse = helpers.communicate(
+                response = helpers.communicate(
                     dispatcher_host, int(dispatcher_port), "status")
             except socket.error as e:
                 raise Exception(

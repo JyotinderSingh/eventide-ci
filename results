@@ -1,0 +1,15 @@
+test_fail (test_fail.TestFileFail) ... FAIL
+test_pass (test_pass.TestFilePass) ... ok
+
+======================================================================
+FAIL: test_fail (test_fail.TestFileFail)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/jyotinder.singh/Documents/Programming/eventide-ci/test_repo_clone_runner/tests/test_fail.py", line 7, in test_fail
+    self.fail("I will fail")
+AssertionError: I will fail
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.001s
+
+FAILED (failures=1)

@@ -61,19 +61,19 @@ class DispatcherHandler(socketserver.BaseRequestHandler):
     BUF_SIZE = 1024
 
     def handle(self) -> None:
-        self.data = self.request.recv(self.BUF_SIZE).strip()
+        self.data = self.request.recv(self.BUF_SIZE).decode().strip()
         command_groups = self.command_re.match(self.data)
 
         if not command_groups:
-            self.request.sendall("Invalid command.")
+            self.request.sendall("Invalid command.".encode())
             return
 
-        command = command_groups(1)
+        command = command_groups.group(1)
 
         if command == "status":
             # fetch status of the dispatcher
             print("in status")
-            self.request.sendall("OK")
+            self.request.sendall("OK".encode())
 
         elif command == "register":
             # Add this test runner to our pool
@@ -82,17 +82,17 @@ class DispatcherHandler(socketserver.BaseRequestHandler):
             host, port = re.findall(r":(\w*)", address)
             runner = {"host": host, "port": port}
             self.server.runners.append(runner)
-            self.request.sendall("OK")
+            self.request.sendall("OK".encode())
 
         elif command == "dispatch":
             # Used by the repo observer to dispatch a test runner against a commit
             print("going to dispatch")
             commit_id = command_groups.group(2)[1:]
             if not self.server.runners:
-                self.request.sendall("No test runners are registered.")
+                self.request.sendall("No test runners are registered.".encode())
             else:
                 # The coordinator can trust us to dispatch the test
-                self.request.sendall("OK")
+                self.request.sendall("OK".encode())
                 dispatch_tests(self.server, commit_id)
 
         elif command == "results":
@@ -100,7 +100,7 @@ class DispatcherHandler(socketserver.BaseRequestHandler):
             # format:
             # results:<commit ID>:<length of results data in bytes>:<results>
             print("got test results")
-            results = command_groups(2)[1:]
+            results = command_groups.group(2)[1:]
             results = results.split(":")
             commit_id = results[0]
             length_msg = int(results[1])
@@ -109,15 +109,17 @@ class DispatcherHandler(socketserver.BaseRequestHandler):
                 (len(command) + len(commit_id) + len(results[1]) + 3)
             if length_msg > remaining_buffer:
                 self.data += self.request.recv(length_msg -
-                                               remaining_buffer).strip()
+                                               remaining_buffer).decode().strip()
             del self.server.dispatched_commits[commit_id]
             if not os.path.exists("test_results"):
                 os.makedirs("test_results")
-            with open(f"test_results/{commit_id}", "W") as f:
+            with open(f"test_results/{commit_id}", "w") as f:
                 data = self.data.split(":")[3:]
                 data = "\n".join(data)
                 f.write(data)
-            self.request.sendall("OK")
+            self.request.sendall("OK".encode())
+        else:
+            self.request.sendall("Invalid command".encode())
 
 
 def serve():
@@ -127,7 +129,7 @@ def serve():
         default="localhost",
         action="store")
     parser.add_argument(
-        "--port", help="dispatcher's port, by default it uses 8888", default=888,
+        "--port", help="dispatcher's port, by default it uses 8888", default=8888,
         action="store")
     args = parser.parse_args()
 
@@ -144,7 +146,7 @@ def serve():
         pending_commits variable.
         """
         def manage_commit_lists(runner):
-            for commit, assigned_runner in server.dispatched_commits.iteritems():
+            for commit, assigned_runner in server.dispatched_commits.items():
                 if assigned_runner == runner:
                     del server.dispatched_commits[commit]
                     server.pending_commits.append(commit)
@@ -166,6 +168,7 @@ def serve():
                 except socket.error as e:
                     manage_commit_lists(runner)
 
+    # This will kickoff tests that failed
     def redistribute(server):
         """
         This function is used to dispatch the commit IDs logged in pending_commits.
@@ -189,6 +192,7 @@ def serve():
         server.serve_forever()
     except (KeyboardInterrupt, Exception):
         # if any exception occurs, kill the thread
+        print("\nshutting down gracefully")
         server.dead = True
         runner_heartbeat.join()
         redistributor.join()

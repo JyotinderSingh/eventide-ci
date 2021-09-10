@@ -1,0 +1,7 @@
+Removing tests/__pycache__/
+Updating 9999504..fa07220
+Fast-forward
+ pop | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 pop
+HEAD is now at fa07220 sdf
