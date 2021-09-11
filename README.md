@@ -37,7 +37,7 @@ cd test_repo
 git init
 ```
 
-To get started, we need at least one commit in this master repository. You can add the [example tests provided here](./example_tests) for testing purposes.
+To get started, we need at least one commit in this master repository. You can add the [example tests provided here](./tests) for testing purposes.
 
 You would want your tests to be present in a directory called `tests`. This is where Eventide looks for test files to be run.
 
