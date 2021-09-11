@@ -1,4 +1,4 @@
-# Eventide
+# 🌘 Eventide 
 
 ### Eventide is a simple distributed Continuous Integration system.
 
