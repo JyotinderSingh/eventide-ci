@@ -27,7 +27,7 @@ The system is built of 3 main components:
 
 ### Setup
 
-Create a repository you want Eventide to monitor. Currently Eventide supports git repositories only. You can clone a remote git repository as well.
+Create a repository you want Eventide to monitor. Currently Eventide supports git repositories only.
 
 This is the main repository where the developers will check in their code.
 
@@ -49,7 +49,7 @@ git commit -m "add tests"
 ```
 
 The Repo Observer service will need its own copy of the repository, since it might exist on a different system altogether.
-Let's create a clone of the master repo (you can use a .git url as well).
+Let's create a clone of the master repo
 
 ```
 git clone /path/to/test_repo test_repo_clone_observer
@@ -104,11 +104,53 @@ The `repo_observer_srv.py` will realize there is a new commit and notify the dis
 
 Once the dispatcher receives the results, it stores them in a `test_results/` folder in the code base, using the `commit ID` as the filename.
 
+## Configuring the services
+
+You can add the following command line arguments when launching the services.
+
+### Repo Observer Service
+
+- `--dispatcher-server`
+
+  Dispatcher `host:port`, by default it uses `localhost:8888`
+
+- `repo`
+
+  path to the repository to be observed (needs a specific clone for itself)
+
+### Dispatcher Service
+
+- `--host`
+
+  Dispatcher service's host, by default it uses `localhost`
+
+- `--port`
+
+  Port on which the service will listen, by default it uses `8888`
+
+### Test Runner Service
+
+- `--host`
+
+  Host for the test runner instance, by default it uses `localhost`
+
+- `--port`
+
+  Port on which the test runner will listen, by default it uses values >= `8900`
+
+- `--dispatcher-server`
+
+  Dispatcher Service's `host:port`, by default it uses `localhost:8888`
+
+- `repo`
+
+  Path to the repository this will observe.
+
 ## Limitations
 
 This software is currently under development, and has a few limitations:
 
-- Only git repositories are supported as of now.
+- Only local git repositories are supported as of now.
 - The test runner only checks the `tests/` directory in the codebase to look for tests to run. This is currently not configurable.
 - Eventide checks for changes to the repo every 5 seconds. It does not test every commit made in these 5 seconds, only the most recent commit.
 - The test results are stored on the file system local to the Dispatcher service. A better approach would be to send this to another service that hosts these results on the web for easier access.
