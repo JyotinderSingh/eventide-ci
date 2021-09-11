@@ -10,8 +10,8 @@ This is an **initial prototype** for a distributed Continuous Integration System
 
 - Distributed architecture for scalability - supports virtually unlimited concurrent test runners.
 - New test runners auto register themselves with the cluster.
+- Test results get stored in a file with a summary of the test runs.
 - Includes heartbeat mechanism among different services, which allows for some simple error handling:
-  - Test results get stored in a file with a summary of the test runs.
   - If a test runner dies, the dispatcher service will automatically figure this out and remove it from the pool - and will give another runner (if available) the job. Otherwise, it will wait for the current test runners to finish processing or a new test runner to register itself in the pool.
   - If the dispatcher service dies, the test runners and repo observer service will notice this and gracefully shut down.
 
